@@ -1,10 +1,11 @@
 {
-  "name": "wiki-security-friends",
+  "name": "wiki-security-tlsfriends",
   "description": "A friendly security module (dependency free) for Federated Wiki node server",
-  "version": "0.2.5",
-  "author": "Paul Rodwell <paul.rodwell@btinternet.com> (http://rodwell.me/)",
+  "version": "0.1.0",
+  "author": "Robert Best <me@Robert.Best> (http://Robert.Best/)",
   "contributors": [
-    "Ward Cunningham <ward@c2.com>"
+    "Ward Cunningham <ward@c2.com>", 
+    "Paul Rodwell <paul.rodwell@btinternet.com>"
   ],
   "license": "MIT",
   "dependencies": {
@@ -22,12 +23,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/fedwiki/wiki-security-friends.git"
+    "url": "https://github.com/Bortseb/wiki-security-tlsfriends.git"
   },
   "bugs": {
-    "url": "https://github.com/fedwiki/wiki-security-friends/issues"
-  },
-  "engines": {
-    "node": ">=4"
+    "url": "https://github.com/Bortseb/wiki-security-tlsfriends/issues"
   }
 }

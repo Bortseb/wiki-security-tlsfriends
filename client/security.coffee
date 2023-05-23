@@ -87,59 +87,84 @@ setup = (user) ->
 
   if (!$("link[href='/security/style.css']").length)
     $('<link rel="stylesheet" href="/security/style.css">').appendTo("head")
+  
+  if isSecureContext
+    dialog = """
+              <dialog id="reclaim">
+                <form method="dialog">
+                  <h1>Welcome back #{ownerName}.</h1>
+                  <p>Please enter your reclaim code.</p>
+                  <input type="password" id="reclaimcode" name="reclaim" required>
+                  <div>
+                    <menu>
+                      <li><button formmethod="dialog" value="">Cancel</button></li>
+                      <li><button autofocus id="confirmBtn" value="default">Submit</button></li>
+                    </menu>
+                  </div>
+                </form>
+              </dialog>
+            """
+    if (!document.getElementById('reclaim'))
+      $(dialog).appendTo("body")
 
-  dialog = """
-            <dialog id="reclaim">
-              <form method="dialog">
-                <h1>Welcome back #{ownerName}.</h1>
-                <p>Please enter your reclaim code.</p>
-                <input type="password" id="reclaimcode" name="reclaim" required>
-                <div>
-                  <menu>
-                    <li><button formmethod="dialog" value="">Cancel</button></li>
-                    <li><button autofocus id="confirmBtn" value="default">Submit</button></li>
-                  </menu>
-                </div>
-              </form>
-            </dialog>
-           """
-  if (!document.getElementById('reclaim'))
-    $(dialog).appendTo("body")
+      reclaimDialog = document.getElementById('reclaim')
+      reclaimEl = reclaimDialog.querySelector('#reclaimcode')
+      confirmBtn = reclaimDialog.querySelector('#confirmBtn')
 
-    reclaimDialog = document.getElementById('reclaim')
-    reclaimEl = reclaimDialog.querySelector('#reclaimcode')
-    confirmBtn = reclaimDialog.querySelector('#confirmBtn')
+      confirmBtn.addEventListener 'click', (event) -> 
+        event.preventDefault()
+        reclaimDialog.close(reclaimEl.value)
 
-    confirmBtn.addEventListener 'click', (event) -> 
-      event.preventDefault()
-      reclaimDialog.close(reclaimEl.value)
+      reclaimEl.addEventListener 'change', (event) ->
+        confirmBtn.value = reclaimEl.value
 
-    reclaimEl.addEventListener 'change', (event) ->
-      confirmBtn.value = reclaimEl.value
+      reclaimDialog.addEventListener 'close', (event) ->
+        event.preventDefault()
+        reclaimCode = reclaimDialog.returnValue
+      
+        unless reclaimCode is ''
+          data = new FormData()
+          data.append( "json", JSON.stringify({reclaimCode: reclaimCode}))
+          myInit = {
+            method: 'POST'
+            cache: 'no-cache'
+            mode: 'same-origin'
+            credentials: 'include'
+            body: reclaimCode
+          }
+          fetch '/auth/reclaim/', myInit
+          .then (response) ->
+            console.log 'reclaim response', response
+            if response.ok
+              window.isAuthenticated = true
+              window.isOwner = true
+              update_footer ownerName, true
+            else
+              console.log 'reclaim failed: ', response
+  else
+    dialog = """
+          <dialog id="reclaim">
+            <form method="dialog">
+              <h1>Sorry, login not available here.</h1>
+              <p>Please access via HTTPS at the link below:</p>
+              <a href= "#{window.origin.replace(/^http/, "https")}">Click here!</a>
+              <div>
+                <menu>
+                  <li><button autofocus id="confirmBtn" value="default">OK</button></li>
+                </menu>
+              </div>
+            </form>
+          </dialog>
+        """
+    if (!document.getElementById('reclaim'))
+      $(dialog).appendTo("body")
 
-    reclaimDialog.addEventListener 'close', (event) ->
-      event.preventDefault()
-      reclaimCode = reclaimDialog.returnValue
-    
-      unless reclaimCode is ''
-        data = new FormData()
-        data.append( "json", JSON.stringify({reclaimCode: reclaimCode}))
-        myInit = {
-          method: 'POST'
-          cache: 'no-cache'
-          mode: 'same-origin'
-          credentials: 'include'
-          body: reclaimCode
-        }
-        fetch '/auth/reclaim/', myInit
-        .then (response) ->
-          console.log 'reclaim response', response
-          if response.ok
-            window.isAuthenticated = true
-            window.isOwner = true
-            update_footer ownerName, true
-          else
-            console.log 'reclaim failed: ', response
+      reclaimDialog = document.getElementById('reclaim')
+      confirmBtn = reclaimDialog.querySelector('#confirmBtn')
+
+      confirmBtn.addEventListener 'click', (event) -> 
+        event.preventDefault()
+        reclaimDialog.close()
 
   update_footer ownerName, isAuthenticated
 
