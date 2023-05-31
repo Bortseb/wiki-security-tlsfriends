@@ -145,9 +145,9 @@ setup = (user) ->
     dialog = """
           <dialog id="reclaim">
             <form method="dialog">
-              <h1>Sorry, login not available here.</h1>
-              <p>Please access via HTTPS at the link below:</p>
-              <a href= "#{window.origin.replace(/^http/, "https")}">Click here!</a>
+              <h1>Sorry, login not available over HTTP on this wiki.</h1>
+              <p>Please try again via HTTPS at the link below:</p>
+              <a href= "#{window.origin.replace(/^http/, "https")}">Click here to switch to HTTPS</a>
               <div>
                 <menu>
                   <li><button autofocus id="confirmBtn" value="default">OK</button></li>

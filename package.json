@@ -1,7 +1,7 @@
 {
   "name": "wiki-security-tlsfriends",
-  "description": "A friendly security module (dependency free) for Federated Wiki node server",
-  "version": "0.1.0",
+  "description": "A friendly security module, with TLS, for Federated Wiki node server",
+  "version": "0.1.1",
   "author": "Robert Best <me@Robert.Best> (http://Robert.Best/)",
   "contributors": [
     "Ward Cunningham <ward@c2.com>", 
